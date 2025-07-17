@@ -6,10 +6,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
+import com.luneruniverse.nettymux.messageprotocol.NettyMessageMultiplexer;
+import com.luneruniverse.nettymux.messageprotocol.NormalHttpMessageProtocol;
+import com.luneruniverse.nettymux.messageprotocol.WebsocketHttpMessageProtocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelPipeline;
 
+/**
+ * Detects HTTP/1.1 requests<br>
+ * <br>
+ * <strong>Warning:</strong> This doesn't check for the <code>Upgrade</code> header. Follow this with a
+ * {@link NettyMessageMultiplexer} that includes the {@link NormalHttpMessageProtocol} to confirm that the request
+ * is normal. Similarly, you can detect the WebSocket protocol by including the {@link WebsocketHttpMessageProtocol}.
+ */
 public class HttpByteProtocol implements ByteProtocol {
 	
 	private static final Set<String> METHODS;
@@ -33,6 +43,9 @@ public class HttpByteProtocol implements ByteProtocol {
 	
 	private final Consumer<ChannelPipeline> bind;
 	
+	/**
+	 * @param bind Set up the pipeline for HTTP/1.1 (see {@link #bind(ChannelPipeline)} for details)
+	 */
 	public HttpByteProtocol(Consumer<ChannelPipeline> bind) {
 		this.bind = bind;
 	}

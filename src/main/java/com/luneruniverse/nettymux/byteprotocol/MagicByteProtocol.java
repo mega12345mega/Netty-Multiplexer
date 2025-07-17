@@ -7,6 +7,9 @@ import com.luneruniverse.nettymux.ProtocolDetectionResult;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelPipeline;
 
+/**
+ * Detects protocols that start by sending a specific byte sequence
+ */
 public class MagicByteProtocol implements ByteProtocol {
 	
 	private final String alpnName;
@@ -14,6 +17,12 @@ public class MagicByteProtocol implements ByteProtocol {
 	private final boolean removeMagic;
 	private final Consumer<ChannelPipeline> bind;
 	
+	/**
+	 * @param alpnName The name used in ALPN negotiation (see {@link #getAlpnName()} for details)
+	 * @param magic The byte sequence that starts this protocol
+	 * @param removeMagic If the magic byte sequence should be removed before data is passed to the protocol handlers
+	 * @param bind Set up the pipeline for this protocol (see {@link #bind(ChannelPipeline)} for details)
+	 */
 	public MagicByteProtocol(String alpnName, byte[] magic, boolean removeMagic, Consumer<ChannelPipeline> bind) {
 		this.alpnName = alpnName;
 		this.magic = magic;

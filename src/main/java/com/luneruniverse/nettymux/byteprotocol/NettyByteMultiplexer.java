@@ -7,12 +7,22 @@ import java.util.Objects;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
 import io.netty.handler.ssl.SslContext;
 
+/**
+ * A {@link ChannelInboundHandler} that identifies the protocol by the incoming bytes and calls
+ * {@link ByteProtocol#bind(ChannelPipeline)} once identified. If none of the protocols are matched, a
+ * {@link InvalidByteProtocolException} is thrown with a corresponding {@link InvalidByteProtocolException.Type}.
+ */
 public class NettyByteMultiplexer extends ByteToMessageDecoder {
 	
+	/**
+	 * Creates {@link NettyByteMultiplexer}s
+	 */
 	public static class Builder {
 		private final List<ByteProtocol> protocols;
 		private SslContext ssl;
@@ -22,35 +32,66 @@ public class NettyByteMultiplexer extends ByteToMessageDecoder {
 			protocols = new ArrayList<>();
 		}
 		
+		/**
+		 * @param protocol A possible incoming protocol
+		 * @return this
+		 */
 		public Builder addProtocol(ByteProtocol protocol) {
 			protocols.add(protocol);
 			return this;
 		}
+		/**
+		 * @param protocols Possible incoming protocols
+		 * @return this
+		 */
 		public Builder addProtocols(ByteProtocol... protocols) {
 			for (ByteProtocol protocol : protocols)
 				this.protocols.add(protocol);
 			return this;
 		}
 		
+		/**
+		 * Require all incoming connections to use SSL; connections that don't request SSL will result in a
+		 * {@link InvalidByteProtocolException} with the type being
+		 * {@link InvalidByteProtocolException.Type#NOT_SSL_WHEN_FORCED}
+		 * @param ssl The server's SSL data
+		 * @return this
+		 */
 		public Builder forceSsl(SslContext ssl) {
 			Objects.requireNonNull(ssl, "ssl");
 			this.ssl = ssl;
 			this.forceSsl = true;
 			return this;
 		}
+		/**
+		 * Allow incoming connections to use SSL
+		 * @param ssl The server's SSL data
+		 * @return this
+		 */
 		public Builder optionalSsl(SslContext ssl) {
 			Objects.requireNonNull(ssl, "ssl");
 			this.ssl = ssl;
 			this.forceSsl = false;
 			return this;
 		}
+		/**
+		 * <em>This is the default behavior</em><br>
+		 * <br>
+		 * Don't check if incoming connections use SSL; if the first byte is 0x16, this is passed along to the protocols
+		 * like any other byte rather than causing SSL handlers to be bound to the channel pipeline
+		 * @return this
+		 */
 		public Builder noSsl() {
 			this.ssl = null;
 			this.forceSsl = false;
 			return this;
 		}
 		
-		public NettyByteMultiplexer build() {
+		/**
+		 * @return A {@link NettyByteMultiplexer} with the added protocols and SSL settings
+		 * @throws IllegalStateException If no protocols were added (regardless of SSL settings)
+		 */
+		public NettyByteMultiplexer build() throws IllegalStateException {
 			if (protocols.isEmpty())
 				throw new IllegalStateException("There are no protocols registered!");
 			
@@ -58,6 +99,9 @@ public class NettyByteMultiplexer extends ByteToMessageDecoder {
 		}
 	}
 	
+	/**
+	 * @return A {@link Builder} to create a {@link NettyByteMultiplexer}
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}

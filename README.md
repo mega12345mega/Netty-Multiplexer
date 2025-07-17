@@ -3,6 +3,8 @@
 
 Combine HTTP, WS, SSL/TLS, and custom protocols into one port
 
+[Javadoc](https://jitpack.io/com/github/mega12345mega/Netty-Multiplexer/latest/javadoc/)
+
 # Usage
 
 Use `NettyByteMultiplexer` and `NettyMessageMultiplexer` to detect what protocol should be used.
