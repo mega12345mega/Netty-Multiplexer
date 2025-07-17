@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.luneruniverse.nettymux</groupId>
 	<artifactId>nettymux</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${env.VERSION}</version>
 	<name>Netty Multiplexer</name>
 	<description>Combine HTTP, WS, SSL/TLS, and custom protocols into one port</description>
 	<dependencies>
