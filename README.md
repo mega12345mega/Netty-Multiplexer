@@ -23,7 +23,7 @@ channel.pipeline().addLast(NettyByteMultiplexer.builder()
                     .addProtocol(new NormalHttpMessageProtocol(pipeline2 -> {
                         System.out.println("bind normal http");
                     }))
-                    .addProtocol(new WebsocketHttpMessageProtocol(pipeline2 -> {
+                    .addProtocol(new WebSocketHttpMessageProtocol(pipeline2 -> {
                         System.out.println("bind websocket");
                     }))
                     .build());

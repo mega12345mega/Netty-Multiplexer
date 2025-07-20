@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 import com.luneruniverse.nettymux.messageprotocol.NettyMessageMultiplexer;
 import com.luneruniverse.nettymux.messageprotocol.NormalHttpMessageProtocol;
-import com.luneruniverse.nettymux.messageprotocol.WebsocketHttpMessageProtocol;
+import com.luneruniverse.nettymux.messageprotocol.WebSocketHttpMessageProtocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelPipeline;
@@ -18,7 +18,7 @@ import io.netty.channel.ChannelPipeline;
  * <br>
  * <strong>Warning:</strong> This doesn't check for the <code>Upgrade</code> header. Follow this with a
  * {@link NettyMessageMultiplexer} that includes the {@link NormalHttpMessageProtocol} to confirm that the request
- * is normal. Similarly, you can detect the WebSocket protocol by including the {@link WebsocketHttpMessageProtocol}.
+ * is normal. Similarly, you can detect the WebSocket protocol by including the {@link WebSocketHttpMessageProtocol}.
  */
 public class HttpByteProtocol implements ByteProtocol {
 	

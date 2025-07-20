@@ -5,7 +5,7 @@ import com.luneruniverse.nettymux.byteprotocol.MagicByteProtocol;
 import com.luneruniverse.nettymux.byteprotocol.NettyByteMultiplexer;
 import com.luneruniverse.nettymux.messageprotocol.NettyMessageMultiplexer;
 import com.luneruniverse.nettymux.messageprotocol.NormalHttpMessageProtocol;
-import com.luneruniverse.nettymux.messageprotocol.WebsocketHttpMessageProtocol;
+import com.luneruniverse.nettymux.messageprotocol.WebSocketHttpMessageProtocol;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -70,7 +70,7 @@ public class NettyMuxServerTest {
 												.addProtocol(new NormalHttpMessageProtocol(pipeline2 -> {
 													System.out.println("bind normal http");
 												}))
-												.addProtocol(new WebsocketHttpMessageProtocol(pipeline2 -> {
+												.addProtocol(new WebSocketHttpMessageProtocol(pipeline2 -> {
 													System.out.println("bind websocket");
 												}))
 												.build());

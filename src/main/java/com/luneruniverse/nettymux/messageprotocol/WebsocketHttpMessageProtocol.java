@@ -15,14 +15,14 @@ import io.netty.handler.codec.http.HttpHeaders;
  * Detects {@link FullHttpRequest}s that are upgraded to WebSocket (you may want to precede this with a
  * {@link HttpByteProtocol} check)
  */
-public class WebsocketHttpMessageProtocol implements MessageProtocol<FullHttpRequest> {
+public class WebSocketHttpMessageProtocol implements MessageProtocol<FullHttpRequest> {
 	
 	private final Consumer<ChannelPipeline> bind;
 	
 	/**
 	 * @param bind Set up the pipeline for a WebSocket (see {@link #bind(ChannelPipeline)} for details)
 	 */
-	public WebsocketHttpMessageProtocol(Consumer<ChannelPipeline> bind) {
+	public WebSocketHttpMessageProtocol(Consumer<ChannelPipeline> bind) {
 		this.bind = bind;
 	}
 	
