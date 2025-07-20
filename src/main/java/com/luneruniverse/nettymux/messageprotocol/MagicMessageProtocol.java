@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -17,14 +17,14 @@ public class MagicMessageProtocol<I> implements MessageProtocol<I> {
 	
 	private final List<I> magic;
 	private final boolean removeMagic;
-	private final Consumer<ChannelPipeline> bind;
+	private final Consumer<ChannelHandlerContext> bind;
 	
 	/**
 	 * @param magic The message sequence that starts this protocol
 	 * @param removeMagic If the magic message sequence should be removed before data is passed to the protocol handlers
-	 * @param bind Set up the pipeline for this protocol (see {@link #bind(ChannelPipeline)} for details)
+	 * @param bind Set up the pipeline for this protocol (see {@link #bind(ChannelHandlerContext)} for details)
 	 */
-	public MagicMessageProtocol(List<I> magic, boolean removeMagic, Consumer<ChannelPipeline> bind) {
+	public MagicMessageProtocol(List<I> magic, boolean removeMagic, Consumer<ChannelHandlerContext> bind) {
 		this.magic = new ArrayList<>(magic);
 		this.removeMagic = removeMagic;
 		this.bind = bind;
@@ -48,8 +48,8 @@ public class MagicMessageProtocol<I> implements MessageProtocol<I> {
 	}
 	
 	@Override
-	public void bind(ChannelPipeline pipeline) {
-		bind.accept(pipeline);
+	public void bind(ChannelHandlerContext ctx) {
+		bind.accept(ctx);
 	}
 	
 }

@@ -6,13 +6,12 @@ import java.util.List;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
-import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.ReferenceCountUtil;
 
 /**
  * A {@link ChannelInboundHandler} that identifies the protocol by the incoming messages and calls
- * {@link MessageProtocol#bind(ChannelPipeline)} once identified. If none of the protocols are matched, a
+ * {@link MessageProtocol#bind(ChannelHandlerContext)} once identified. If none of the protocols are matched, an
  * {@link InvalidMessageProtocolException} is thrown.
  * @param <I> The type of messages that should be handled
  */
@@ -90,7 +89,7 @@ public class NettyMessageMultiplexer<I> extends MessageToMessageDecoder<I> {
 			
 			switch (protocol.attemptDetection(in)) {
 				case DETECTED:
-					protocol.bind(ctx.pipeline());
+					protocol.bind(ctx);
 					ctx.pipeline().remove(this);
 					return;
 				case UNKNOWN:

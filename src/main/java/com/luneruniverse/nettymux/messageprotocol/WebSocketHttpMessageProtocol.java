@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 import com.luneruniverse.nettymux.byteprotocol.HttpByteProtocol;
 
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -17,12 +17,12 @@ import io.netty.handler.codec.http.HttpHeaders;
  */
 public class WebSocketHttpMessageProtocol implements MessageProtocol<FullHttpRequest> {
 	
-	private final Consumer<ChannelPipeline> bind;
+	private final Consumer<ChannelHandlerContext> bind;
 	
 	/**
-	 * @param bind Set up the pipeline for a WebSocket (see {@link #bind(ChannelPipeline)} for details)
+	 * @param bind Set up the pipeline for a WebSocket (see {@link #bind(ChannelHandlerContext)} for details)
 	 */
-	public WebSocketHttpMessageProtocol(Consumer<ChannelPipeline> bind) {
+	public WebSocketHttpMessageProtocol(Consumer<ChannelHandlerContext> bind) {
 		this.bind = bind;
 	}
 	
@@ -35,8 +35,8 @@ public class WebSocketHttpMessageProtocol implements MessageProtocol<FullHttpReq
 	}
 	
 	@Override
-	public void bind(ChannelPipeline pipeline) {
-		bind.accept(pipeline);
+	public void bind(ChannelHandlerContext ctx) {
+		bind.accept(ctx);
 	}
 	
 }

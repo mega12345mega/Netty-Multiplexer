@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 import com.luneruniverse.nettymux.byteprotocol.HttpByteProtocol;
 
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 
@@ -15,12 +15,12 @@ import io.netty.handler.codec.http.HttpHeaderNames;
  */
 public class NormalHttpMessageProtocol implements MessageProtocol<FullHttpRequest> {
 	
-	private final Consumer<ChannelPipeline> bind;
+	private final Consumer<ChannelHandlerContext> bind;
 	
 	/**
-	 * @param bind Set up the pipeline for un-upgraded HTTP (see {@link #bind(ChannelPipeline)} for details)
+	 * @param bind Set up the pipeline for un-upgraded HTTP (see {@link #bind(ChannelHandlerContext)} for details)
 	 */
-	public NormalHttpMessageProtocol(Consumer<ChannelPipeline> bind) {
+	public NormalHttpMessageProtocol(Consumer<ChannelHandlerContext> bind) {
 		this.bind = bind;
 	}
 	
@@ -31,8 +31,8 @@ public class NormalHttpMessageProtocol implements MessageProtocol<FullHttpReques
 	}
 	
 	@Override
-	public void bind(ChannelPipeline pipeline) {
-		bind.accept(pipeline);
+	public void bind(ChannelHandlerContext ctx) {
+		bind.accept(ctx);
 	}
 	
 }

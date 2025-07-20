@@ -4,8 +4,7 @@ import java.util.List;
 
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 
-import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -25,9 +24,9 @@ public interface MessageProtocol<I> {
 	public ProtocolDetectionResult attemptDetection(List<I> in);
 	/**
 	 * Set up the pipeline to handle this protocol (this is only called if {@link #attemptDetection(List)} returns
-	 * {@link ProtocolDetectionResult#DETECTED}). Note that a {@link ByteToMessageDecoder} will already be added
-	 * to the pipeline.
-	 * @param pipeline The channel pipeline that should be set up
+	 * {@link ProtocolDetectionResult#DETECTED}). You do not need to remove multiplexing-related handlers; this will
+	 * be done automatically after this method returns.
+	 * @param ctx The context of the {@link NettyMessageMultiplexer}
 	 */
-	public void bind(ChannelPipeline pipeline);
+	public void bind(ChannelHandlerContext ctx);
 }

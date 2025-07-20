@@ -11,7 +11,7 @@ import com.luneruniverse.nettymux.messageprotocol.NormalHttpMessageProtocol;
 import com.luneruniverse.nettymux.messageprotocol.WebSocketHttpMessageProtocol;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Detects HTTP/1.1 requests<br>
@@ -41,12 +41,12 @@ public class HttpByteProtocol implements ByteProtocol {
 		MAX_METHOD_LENGTH = METHODS.stream().mapToInt(String::length).max().getAsInt();
 	}
 	
-	private final Consumer<ChannelPipeline> bind;
+	private final Consumer<ChannelHandlerContext> bind;
 	
 	/**
-	 * @param bind Set up the pipeline for HTTP/1.1 (see {@link #bind(ChannelPipeline)} for details)
+	 * @param bind Set up the pipeline for HTTP/1.1 (see {@link #bind(ChannelHandlerContext)} for details)
 	 */
-	public HttpByteProtocol(Consumer<ChannelPipeline> bind) {
+	public HttpByteProtocol(Consumer<ChannelHandlerContext> bind) {
 		this.bind = bind;
 	}
 	
@@ -75,8 +75,8 @@ public class HttpByteProtocol implements ByteProtocol {
 	}
 	
 	@Override
-	public void bind(ChannelPipeline pipeline) {
-		bind.accept(pipeline);
+	public void bind(ChannelHandlerContext ctx) {
+		bind.accept(ctx);
 	}
 	
 }

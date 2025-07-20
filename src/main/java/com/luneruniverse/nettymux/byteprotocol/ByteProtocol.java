@@ -3,7 +3,7 @@ package com.luneruniverse.nettymux.byteprotocol;
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -32,8 +32,10 @@ public interface ByteProtocol {
 	/**
 	 * Set up the pipeline to handle this protocol (this is only called if {@link #attemptDetection(ByteBuf)} returns
 	 * {@link ProtocolDetectionResult#DETECTED}). Note that SSL support will already be added to the pipeline if it
-	 * is in use.
-	 * @param pipeline The channel pipeline that should be set up
+	 * is in use. You do not need to remove multiplexing-related handlers; this will be done automatically after
+	 * this method returns.
+	 * @param ctx The context of the last handler in the pipeline involved in multiplexing (will be the
+	 * {@link NettyByteMultiplexer} if SSL is not in use)
 	 */
-	public void bind(ChannelPipeline pipeline);
+	public void bind(ChannelHandlerContext ctx);
 }

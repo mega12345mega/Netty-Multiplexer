@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import com.luneruniverse.nettymux.ProtocolDetectionResult;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Detects protocols that start by sending a specific byte sequence
@@ -15,15 +15,15 @@ public class MagicByteProtocol implements ByteProtocol {
 	private final String alpnName;
 	private final byte[] magic;
 	private final boolean removeMagic;
-	private final Consumer<ChannelPipeline> bind;
+	private final Consumer<ChannelHandlerContext> bind;
 	
 	/**
 	 * @param alpnName The name used in ALPN negotiation (see {@link #getAlpnName()} for details)
 	 * @param magic The byte sequence that starts this protocol
 	 * @param removeMagic If the magic byte sequence should be removed before data is passed to the protocol handlers
-	 * @param bind Set up the pipeline for this protocol (see {@link #bind(ChannelPipeline)} for details)
+	 * @param bind Set up the pipeline for this protocol (see {@link #bind(ChannelHandlerContext)} for details)
 	 */
-	public MagicByteProtocol(String alpnName, byte[] magic, boolean removeMagic, Consumer<ChannelPipeline> bind) {
+	public MagicByteProtocol(String alpnName, byte[] magic, boolean removeMagic, Consumer<ChannelHandlerContext> bind) {
 		this.alpnName = alpnName;
 		this.magic = magic;
 		this.removeMagic = removeMagic;
@@ -54,8 +54,8 @@ public class MagicByteProtocol implements ByteProtocol {
 	}
 	
 	@Override
-	public void bind(ChannelPipeline pipeline) {
-		bind.accept(pipeline);
+	public void bind(ChannelHandlerContext ctx) {
+		bind.accept(ctx);
 	}
 	
 }

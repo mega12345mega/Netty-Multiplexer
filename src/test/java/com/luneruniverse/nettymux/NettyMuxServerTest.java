@@ -61,16 +61,17 @@ public class NettyMuxServerTest {
 						@Override
 						protected void initChannel(SocketChannel channel) throws Exception {
 							channel.pipeline().addLast(NettyByteMultiplexer.builder()
-									.addProtocol(new MagicByteProtocol("magic", "magic".getBytes(), true, pipeline -> {
+									.addProtocol(new MagicByteProtocol("magic", "magic".getBytes(), true, ctx -> {
 										System.out.println("bind magic");
 									}))
-									.addProtocol(new HttpByteProtocol(pipeline -> {
-										pipeline.addLast(new HttpServerCodec(), new HttpObjectAggregator(65536));
-										pipeline.addLast(NettyMessageMultiplexer.builder(FullHttpRequest.class)
-												.addProtocol(new NormalHttpMessageProtocol(pipeline2 -> {
+									.addProtocol(new HttpByteProtocol(ctx -> {
+										System.out.println("http ...");
+										ctx.pipeline().addLast(new HttpServerCodec(), new HttpObjectAggregator(65536));
+										ctx.pipeline().addLast(NettyMessageMultiplexer.builder(FullHttpRequest.class)
+												.addProtocol(new NormalHttpMessageProtocol(ctx2 -> {
 													System.out.println("bind normal http");
 												}))
-												.addProtocol(new WebSocketHttpMessageProtocol(pipeline2 -> {
+												.addProtocol(new WebSocketHttpMessageProtocol(ctx2 -> {
 													System.out.println("bind websocket");
 												}))
 												.build());

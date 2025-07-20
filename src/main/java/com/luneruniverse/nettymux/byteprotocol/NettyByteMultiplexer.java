@@ -8,14 +8,13 @@ import java.util.Objects;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
-import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
 import io.netty.handler.ssl.SslContext;
 
 /**
  * A {@link ChannelInboundHandler} that identifies the protocol by the incoming bytes and calls
- * {@link ByteProtocol#bind(ChannelPipeline)} once identified. If none of the protocols are matched, a
+ * {@link ByteProtocol#bind(ChannelHandlerContext)} once identified. If none of the protocols are matched, an
  * {@link InvalidByteProtocolException} is thrown with a corresponding {@link InvalidByteProtocolException.Type}.
  */
 public class NettyByteMultiplexer extends ByteToMessageDecoder {
@@ -120,18 +119,19 @@ public class NettyByteMultiplexer extends ByteToMessageDecoder {
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		if (ssl != null) {
 			if (in.getByte(in.readerIndex()) == 0x16) {
-				ctx.pipeline().addLast(ssl.newHandler(ctx.alloc()));
-				ctx.pipeline().addLast(new ApplicationProtocolNegotiationHandler("") {
+				String sslHandlerName = ctx.name() + "#sslHandler";
+				ctx.pipeline().addAfter(ctx.name(), sslHandlerName, ssl.newHandler(ctx.alloc()));
+				ctx.pipeline().addAfter(sslHandlerName, null, new ApplicationProtocolNegotiationHandler("") {
 					@Override
 					protected void configurePipeline(ChannelHandlerContext ctx, String selectedProtocol) throws Exception {
 						if (selectedProtocol.isEmpty()) {
-							ctx.pipeline().addLast(new NettyByteMultiplexer(protocols, null, false));
+							ctx.pipeline().addAfter(ctx.name(), null, new NettyByteMultiplexer(protocols, null, false));
 							return;
 						}
 						
 						for (ByteProtocol protocol : protocols) {
 							if (selectedProtocol.equals(protocol.getAlpnName())) {
-								protocol.bind(ctx.pipeline());
+								protocol.bind(ctx);
 								return;
 							}
 						}
@@ -150,7 +150,7 @@ public class NettyByteMultiplexer extends ByteToMessageDecoder {
 			
 			switch (protocol.attemptDetection(in)) {
 				case DETECTED:
-					protocol.bind(ctx.pipeline());
+					protocol.bind(ctx);
 					ctx.pipeline().remove(this);
 					return;
 				case UNKNOWN:
