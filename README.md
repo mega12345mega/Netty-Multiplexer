@@ -12,7 +12,7 @@ Use `NettyByteMultiplexer` and `NettyMessageMultiplexer` to detect what protocol
 ## Example
 
 See `NettyMuxServerTest` for a complete example:
-```
+```java
 channel.pipeline().addLast(NettyByteMultiplexer.builder()
         .addProtocol(new MagicByteProtocol("magic", "magic".getBytes(), true, ctx -> {
             System.out.println("bind magic");
